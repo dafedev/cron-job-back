@@ -2,6 +2,8 @@ import cron from "node-cron";
 import axios from "axios";
 import MailService from "./services/MailService.js";
 
+// 0 19 * * * => 7:00 pm
+
 cron.schedule("* * * * *", async () => {
   try {
     const response = await axios.get(process.env.API_BACK, {
