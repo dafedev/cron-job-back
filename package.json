@@ -5,10 +5,12 @@
   "main": "index.js",
   "type": "module",
   "engines": {
-    "node": "18.x"},
+    "node": "18.x"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node cronjob.js"
+    "start": "pm2 start cronjob.js --name \"cron-ccinvoicing\"",
+    "dev": "node cronjob.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +19,7 @@
     "axios": "^1.4.0",
     "dotenv": "^16.0.3",
     "node-cron": "^3.0.2",
-    "nodemailer": "^6.9.2"
+    "nodemailer": "^6.9.2",
+    "pm2": "^5.3.0"
   }
 }

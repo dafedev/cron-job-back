@@ -2,7 +2,7 @@ import cron from "node-cron";
 import axios from "axios";
 import MailService from "./services/MailService.js";
 
-const main = async (exitProcess = false) => {
+const main = async () => {
   try {
     const response = await axios.get(process.env.API_BACK, {
       headers: {
@@ -14,18 +14,13 @@ const main = async (exitProcess = false) => {
 
     if (!emails && !subject) {
       console.log("No hay correos para enviar.");
-      return exitProcess && process.exit(1)
     } else {
       await MailService.sendMail(emails, subject, message);
-      return exitProcess && process.exit(1)
     }
   } catch (error) {
     console.log(error);
-    return exitProcess && process.exit(1)
   }
 }
 
 // 0 19 * * * => 7:00 pm
-// cron.schedule("* * * * *", () => main());
-
-main(true)
+cron.schedule("30 21 * * *", () => main());
