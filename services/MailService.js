@@ -10,6 +10,7 @@ const sendMail = async (emails, subject, message) => {
         html: message,
       });
     }
+    23;
     console.log("Correo enviado.");
   } catch (error) {
     return console.log(error);

@@ -1,25 +1,42 @@
 import cron from "node-cron";
 import axios from "axios";
 import MailService from "./services/MailService.js";
+import express from "express";
 
-// 0 19 * * * => 7:00 pm
+const app = express();
 
-cron.schedule("* * * * *", async () => {
+const programarRecordatorio = (fecha, hora, destinatarios, asunto, mensaje) => {
   try {
-    const response = await axios.get(process.env.API_BACK, {
-      headers: {
-        Authorization: `Bearer ${process.env.TOKEN}`,
-      },
+    console.log(hora, fecha);
+    const cronExpresion = `0 ${hora.split(":")[1]} ${hora.split(":")[0]} ${
+      fecha.split("-")[2]
+    } ${fecha.split("-")[1]} *`;
+
+    cron.schedule(cronExpresion, async () => {
+      try {
+        console.log("Enviando correo electrónico...");
+        // Aquí puedes usar la función de envío de correos del MailService
+        await MailService.sendMail(destinatarios, asunto, mensaje);
+      } catch (error) {
+        console.log("Error al enviar el correo electrónico:", error);
+      }
     });
-
-    const { emails, message, subject } = response.data;
-
-    if (!emails && !subject) {
-      return console.log("No hay correos para enviar.");
-    } else {
-      return MailService.sendMail(emails, subject, message);
-    }
   } catch (error) {
-    return console.log(error);
+    console.log("Error al programar el recordatorio:", error);
   }
+};
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor iniciado en el puerto ${PORT}`);
+});
+
+app.get("/crear-recordatorio", (req, res) => {
+  const { fecha, hora, emails } = req.query;
+  console.log(req.query);
+  const destinatarios = [emails];
+  const asunto = "Recordatorio"; // Ejemplo de asunto
+  const mensaje = "Recuerda la tarea importante"; // Ejemplo de mensaje
+  programarRecordatorio(fecha, hora, destinatarios, asunto, mensaje);
+  res.send("Recordatorio creado con éxito");
 });
